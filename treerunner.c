@@ -1,4 +1,5 @@
-#include <unistd.h>
+
+#include <errno.h>
 #include <sys/types.h>
 #include <dirent.h>
 #include <stdio.h>
@@ -11,14 +12,17 @@ pid_t spawn(const char* program, char** argv, char path[PATH_MAX])
 {
     pid_t ch_pid = fork();
     if (ch_pid == -1) {
-        perror("fork");
+        printf("fork: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
 
     if (ch_pid == 0) { // child
-        chdir(path);
+        if (chdir(path) < 0) {
+            printf("chdir: %s\n", strerror(errno));
+            exit(EXIT_FAILURE);
+        }
         execvp(program, argv);
-        perror("execve");
+        printf("execvp: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     } else { // parent
         return ch_pid;
