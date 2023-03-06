@@ -20,8 +20,7 @@ pid_t spawn(const char* program, char** argv, char path[PATH_MAX])
         execvp(program, argv);
         perror("execve");
         exit(EXIT_FAILURE);
-    } 
-    else { // parent
+    } else { // parent
         return ch_pid;
     }
 }
@@ -36,7 +35,6 @@ void execute( char **argv, char path[PATH_MAX])
         perror("waitpid");
         exit(EXIT_FAILURE);
     }
-    printf("finished process with pid - %d\n", child);
 }
 
 void listdir(const char *name, int depth, char *argv[], int argc)
@@ -53,9 +51,10 @@ void listdir(const char *name, int depth, char *argv[], int argc)
             if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
                 continue;
             snprintf(path, sizeof(path), "%s/%s", name, entry->d_name);
-            printf("in [%s]\n", path);
             if (argc > 0) {
                 execute(argv, path);
+            } else {
+               printf("%s\n", path);
             }
 
             listdir(path, depth, argv, argc);
@@ -69,8 +68,7 @@ int main(int argc, char *argv[]) {
     argv++;
     if (argc > 0) {
         execute(argv, "./");
-    }
-    else {
+    } else {
        printf("no command given\n"); 
     }
     listdir(".", 0, argv, argc);
