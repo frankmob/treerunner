@@ -1,2 +1,2 @@
 # treerunner
-Dxecute recursively in trees
+Execute recursively in trees
