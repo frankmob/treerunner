@@ -7,7 +7,7 @@
 #include "unistd.h"
 #include <sys/wait.h>
 
-pid_t spawn(const char* program, char** argv)
+pid_t spawn(const char* program, char** argv, char path[PATH_MAX])
 {
     pid_t ch_pid = fork();
     if (ch_pid == -1) {
@@ -16,6 +16,7 @@ pid_t spawn(const char* program, char** argv)
     }
 
     if (ch_pid == 0) { // child
+        chdir(path);
         execvp(program, argv);
         perror("execve");
         exit(EXIT_FAILURE);
@@ -25,11 +26,11 @@ pid_t spawn(const char* program, char** argv)
     }
 }
 
-void execute( char **argv)
+void execute( char **argv, char path[PATH_MAX])
 {
     pid_t child;
     int wstatus;
-    child = spawn(argv[0], argv);
+    child = spawn(argv[0], argv, path);
 
     if (waitpid(child, &wstatus, WUNTRACED | WCONTINUED) == -1) {
         perror("waitpid");
@@ -54,8 +55,7 @@ void listdir(const char *name, int depth, char *argv[], int argc)
             snprintf(path, sizeof(path), "%s/%s", name, entry->d_name);
             printf("in [%s]\n", path);
             if (argc > 0) {
-                chdir(path);
-                execute(argv);
+                execute(argv, path);
             }
 
             listdir(path, depth, argv, argc);
@@ -68,7 +68,7 @@ int main(int argc, char *argv[]) {
     argc--;
     argv++;
     if (argc > 0) {
-        execute(argv);
+        execute(argv, "./");
     }
     else {
        printf("no command given\n"); 
