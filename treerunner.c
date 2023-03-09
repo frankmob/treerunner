@@ -33,7 +33,7 @@ void execute( char **argv, char path[])
 {
     pid_t child;
     int wstatus;
-    
+
     child = spawn(argv[0], argv, path);
 
     if (waitpid(child, &wstatus, WUNTRACED | WCONTINUED) == -1) {
@@ -42,7 +42,7 @@ void execute( char **argv, char path[])
     }
 }
 
-void listdir(const char *name, int depth, char *argv[], int argc)
+void treewalk(const char *name, int depth, char *argv[], int argc)
 {
     DIR *dir;
     struct dirent *entry;
@@ -61,7 +61,7 @@ void listdir(const char *name, int depth, char *argv[], int argc)
             } else {
                printf("%s\n", path);
             }
-            listdir(path, depth, argv, argc);
+            treewalk(path, depth, argv, argc);
         }
     }
     closedir(dir);
@@ -70,13 +70,13 @@ void listdir(const char *name, int depth, char *argv[], int argc)
 int main(int argc, char *argv[]) {
     argc--;
     argv++;
-    
+
     if (argc > 0) {
-        execute(argv, "./");
+	execute(argv, "./");
     } else {
-       printf("no command given\n"); 
+	printf("no command given\n"); 
     }
 
-    listdir(".", 0, argv, argc);
+    treewalk(".", 0, argv, argc);
     exit(EXIT_SUCCESS);
 }
