@@ -1,7 +1,7 @@
 TARGET = treerunner
 LIBS = -lm
 CC = gcc
-CFLAGS = -D_DEFAULT_SOURCE -g -std=c2x -pedantic -Wall -Wshadow -Wextra -Wpointer-arith
+CFLAGS = -D_DEFAULT_SOURCE -std=c2x -pedantic -Wall -Wshadow -Wextra -Wpointer-arith -O3
 
 .PHONY: default all clean
 
